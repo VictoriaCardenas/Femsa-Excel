@@ -1,0 +1,343 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif);font-size:15px}
+.screen{display:none;padding:1rem 0}
+.screen.active{display:block}
+.card{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+p.sub{font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:1rem}
+input[type=text],input[type=password]{width:100%;border:1.5px solid var(--color-border-secondary);border-radius:8px;padding:10px 12px;font-size:14px;color:var(--color-text-primary);background:var(--color-background-primary);margin-bottom:10px}
+input:focus{outline:none;border-color:#2563eb}
+.btn{display:inline-block;width:100%;padding:11px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;text-align:center}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-outline{background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);color:var(--color-text-primary)}
+.btn-outline:hover{border-color:#2563eb;color:#2563eb}
+.btn-sm{width:auto;padding:7px 14px;font-size:13px}
+.progress-bar{height:4px;background:var(--color-border-tertiary);border-radius:99px;margin-bottom:1.25rem;overflow:hidden}
+.progress-fill{height:100%;background:#2563eb;border-radius:99px;transition:width 0.4s}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.q-num{font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+.q-badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px}
+.badge-bajo{background:#dcfce7;color:#166534}
+.badge-medio{background:#fef9c3;color:#854d0e}
+.badge-avanzado{background:#ede9fe;color:#5b21b6}
+.q-text{font-size:15px;color:var(--color-text-primary);line-height:1.55;margin-bottom:12px}
+.q-code{font-family:var(--font-mono,monospace);font-size:12px;background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:6px;padding:8px 12px;margin-bottom:12px;color:var(--color-text-secondary);word-break:break-all}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;padding:10px 13px;border-radius:8px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:14px;cursor:pointer;line-height:1.4;width:100%}
+.opt:hover{border-color:#2563eb;background:#eff6ff;color:#1e40af}
+.opt.correct{border-color:#16a34a;background:#dcfce7;color:#166534}
+.opt.wrong{border-color:#dc2626;background:#fee2e2;color:#991b1b}
+.opt.selected-correct{border-color:#16a34a;background:#dcfce7;color:#166534}
+.opt:disabled{cursor:default}
+.feedback{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:6px;line-height:1.5;display:none}
+.feedback.show{display:block}
+.feedback.ok{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.feedback.fail{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.btn-next{display:none;margin-top:1rem;width:100%}
+.result-center{text-align:center;padding:1rem 0}
+.big-icon{font-size:44px;margin-bottom:.75rem}
+.level-label{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.score-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.bk-item{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:8px;padding:10px;text-align:center}
+.bk-label{font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;font-weight:500;margin-bottom:3px}
+.bk-val{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.desc-box{font-size:13px;color:var(--color-text-secondary);line-height:1.6;text-align:left;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:8px;padding:12px;margin-bottom:1.25rem}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--color-border-secondary);color:var(--color-text-secondary);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.admin-table td{padding:9px 10px;border-bottom:1px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:middle}
+.admin-table tr:last-child td{border-bottom:none}
+.level-pill{font-size:11px;font-weight:500;padding:2px 8px;border-radius:99px}
+.err{font-size:13px;color:#991b1b;margin-top:6px;display:none}
+.empty-state{text-align:center;padding:2rem;color:var(--color-text-tertiary);font-size:14px}
+.tab-row{display:flex;gap:8px;margin-bottom:1rem}
+.tab-btn{padding:7px 14px;font-size:13px;border-radius:8px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;font-weight:500}
+.tab-btn.active{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.stat-card{background:var(--color-background-secondary);border-radius:8px;padding:10px;text-align:center}
+.stat-num{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.stat-lbl{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Evaluación de nivel Excel con panel de administrador</h2>
+
+<div id="screenHome" class="screen active">
+  <div class="card">
+    <h2>Evaluación de Excel</h2>
+    <p class="sub">15 preguntas que miden tu nivel real. Al final verás tu clasificación.</p>
+    <input type="text" id="nameInput" placeholder="Tu nombre completo" maxlength="60">
+    <button class="btn btn-primary" onclick="startQuiz()">Comenzar evaluación</button>
+    <div style="margin-top:12px;text-align:center">
+      <button class="btn btn-outline btn-sm" style="width:auto" onclick="showScreen('screenAdmin')">Acceso administrador</button>
+    </div>
+  </div>
+</div>
+
+<div id="screenQuiz" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div id="questionArea"></div>
+  <button class="btn btn-primary btn-next" id="btnNext" onclick="nextQ()">Siguiente →</button>
+</div>
+
+<div id="screenResult" class="screen">
+  <div class="card result-center">
+    <div class="big-icon" id="rIcon"></div>
+    <div class="level-label" id="rLevel"></div>
+    <div class="score-sub" id="rScore"></div>
+    <div class="breakdown">
+      <div class="bk-item"><div class="bk-label">Básico</div><div class="bk-val" id="rBajo"></div></div>
+      <div class="bk-item"><div class="bk-label">Medio</div><div class="bk-val" id="rMedio"></div></div>
+      <div class="bk-item"><div class="bk-label">Avanzado</div><div class="bk-val" id="rAvanzado"></div></div>
+    </div>
+    <div class="desc-box" id="rDesc"></div>
+    <button class="btn btn-outline" onclick="showScreen('screenHome')" style="margin-bottom:8px">Volver al inicio</button>
+  </div>
+</div>
+
+<div id="screenAdmin" class="screen">
+  <div id="adminLogin" class="card">
+    <h2>Administrador</h2>
+    <p class="sub">Ingresa la contraseña para ver los resultados.</p>
+    <input type="password" id="pwInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="btn btn-primary" onclick="checkPw()">Ingresar</button>
+    <p class="err" id="pwErr">Contraseña incorrecta.</p>
+    <div style="margin-top:10px">
+      <button class="btn btn-outline btn-sm" style="width:auto" onclick="showScreen('screenHome')">Volver</button>
+    </div>
+  </div>
+  <div id="adminPanel" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <h2 style="margin:0">Panel de resultados</h2>
+      <button class="btn btn-outline btn-sm" onclick="logoutAdmin()">Salir</button>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabHist" onclick="switchTab('hist')">Historial</button>
+      <button class="tab-btn" id="tabStats" onclick="switchTab('stats')">Estadísticas</button>
+    </div>
+    <div id="tabHistContent">
+      <div id="histTable"></div>
+    </div>
+    <div id="tabStatsContent" style="display:none">
+      <div class="stat-grid" id="statsGrid"></div>
+      <div id="statsDetail"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="clearHistory()">Borrar historial</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PW = "excel2025";
+const STORAGE_KEY = "excel_quiz_results_v2";
+
+const questions = [
+  {level:"bajo",text:"¿Cuál atajo aplica formato de moneda a una celda?",opts:["Ctrl+Shift+%","Ctrl+Shift+$","Ctrl+Shift+#","Ctrl+Shift+@"],correct:1,feedback:"Ctrl+Shift+$ aplica formato de moneda/contabilidad. Para porcentaje se usa Ctrl+Shift+%."},
+  {level:"bajo",text:"¿Qué función devuelve el número de mes de una fecha? Ej: =_____(HOY())",opts:["FECHA()","DIA()","MES()","TEXTO()"],correct:2,feedback:"MES(fecha) devuelve el mes como número (1–12). TEXTO() puede mostrarlo como texto, pero no como número directamente."},
+  {level:"bajo",text:"Al copiar =A1+B1 hacia abajo, ¿qué referencia NO cambia?",opts:["A1 y B1 cambian a A2+B2","Las referencias relativas siempre cambian","$A$1+$B$1 no cambia nunca","Solo cambia B1"],correct:2,feedback:"Las referencias absolutas ($A$1) no cambian al copiar. Las relativas (A1) sí cambian según la dirección de copia."},
+  {level:"bajo",text:"¿Qué hace Ctrl+Z en Excel?",opts:["Guardar el archivo","Deshacer la última acción","Cerrar el libro","Aplicar negrita"],correct:1,feedback:"Ctrl+Z deshace la última acción. Ctrl+Y rehace. Ctrl+S guarda."},
+  {level:"bajo",text:"¿Cómo se escribe correctamente una función SI con dos resultados?",opts:["=SI(A1>10;'Sí';'No')","=SI(A1>10,'Sí')","=SI(A1>10)","=SIERROR(A1>10,'Sí')"],correct:0,feedback:"=SI(condición; valor_si_verdadero; valor_si_falso) es la sintaxis correcta. El separador puede ser ; o , según configuración regional."},
+  {level:"medio",text:"Tienes tablas Ventas (ID_Producto, Cantidad) y Productos (ID, Nombre, Precio). ¿Cuál fórmula trae el precio correcto?",opts:["=BUSCARV(A2,Productos,3,0)","=BUSCARV(A2,Productos!A:C,3,FALSO)","=INDICE(Productos!C:C,COINCIDIR(A2,Productos!A:A,0))","Todas son correctas"],correct:3,feedback:"Las tres funcionan. BUSCARV con referencia cruzada de hoja e INDICE+COINCIDIR son equivalentes. Saber esto indica nivel medio-avanzado."},
+  {level:"medio",text:"¿Qué diferencia hay entre CONTAR() y CONTARA()?",opts:["Son idénticas, solo cambia el nombre en versiones antiguas","CONTAR() cuenta números; CONTARA() cuenta celdas no vacías","CONTAR() cuenta texto; CONTARA() cuenta números","CONTARA() incluye celdas con errores, CONTAR() no"],correct:1,feedback:"CONTAR() solo cuenta valores numéricos. CONTARA() cuenta cualquier celda no vacía (texto, números, errores). CONTARBLANCO() cuenta las vacías."},
+  {level:"medio",text:"¿Qué resultado da esta fórmula?",code:"=SI(Y(3>2, 5<4), \"A\", \"B\")",opts:["A","B","VERDADERO","Error"],correct:1,feedback:"Y() requiere que TODAS las condiciones sean verdaderas. 3>2 es VERDADERO, pero 5<4 es FALSO. Entonces Y()=FALSO y SI() retorna 'B'."},
+  {level:"medio",text:"Al agregar 'Región' al área Filas de una tabla dinámica, ¿qué ocurre con valores repetidos?",opts:["Excel muestra error por etiquetas duplicadas","Agrupa automáticamente todas las filas con la misma región","Solo muestra la primera aparición","Pide definir la función de agregación"],correct:1,feedback:"Las tablas dinámicas consolidan automáticamente. Todos los registros 'Norte' se agrupan en una sola fila y las métricas se agregan (suma, conteo, etc.)."},
+  {level:"medio",text:"¿Qué hace la función TEXTO(A1,\"dd/mm/aaaa\") si A1 contiene una fecha?",opts:["Convierte la fecha en número serial","Formatea la fecha como texto con ese patrón","Extrae solo el día de la fecha","Convierte texto en fecha"],correct:1,feedback:"TEXTO() convierte un valor en texto aplicando un formato. El resultado es texto, no una fecha. Útil para concatenar fechas con texto."},
+  {level:"avanzado",text:"Quieres el total de ventas de los últimos 30 días sin modificar datos. ¿Qué fórmulas son correctas?",opts:["=SUMA(SI(Fecha>=HOY()-30,Venta,0)) solo","=SUMAR.SI(A:A,\">=\"&HOY()-30,B:B)","=SUMAPRODUCTO((A2:A500>=HOY()-30)*B2:B500)","Las opciones 2 y 3 son correctas"],correct:3,feedback:"SUMAR.SI con operador concatenado y SUMAPRODUCTO con condición lógica son las dos formas eficientes. La opción 1 con SI() requiere fórmula matricial (Ctrl+Shift+Enter) en versiones antiguas."},
+  {level:"avanzado",text:"¿Qué hace exactamente esta fórmula?",code:"=INDICE(B2:B100,COINCIDIR(1,(A2:A100=\"Sur\")*(C2:C100>5000),0))",opts:["Suma B donde región=Sur y venta>5000","Devuelve el primer valor de B donde región=Sur Y venta>5000","Cuenta filas que cumplen ambas condiciones","Es inválida: COINCIDIR no acepta arrays"],correct:1,feedback:"Fórmula matricial clásica: (cond1)*(cond2) genera 1 si ambas son verdaderas. COINCIDIR busca el primer 1. INDICE devuelve el valor correspondiente en B. En Excel 365 no necesita Ctrl+Shift+Enter."},
+  {level:"avanzado",text:"Archivo con 500,000 filas recalcula muy lento. ¿Qué cambio tendría mayor impacto?",opts:["Reemplazar BUSCARV por BUSCARX","Cambiar rangos completos (A:A) por rangos acotados (A2:A500001) en fórmulas SUMAPRODUCTO","Cambiar el modo de cálculo a Manual","Activar cálculo multiproceso en opciones avanzadas"],correct:1,feedback:"Usar A:A obliga a Excel a evaluar más de un millón de celdas. Acotar rangos es el cambio más impactante. El modo manual ayuda, pero no resuelve el problema de fondo."},
+  {level:"avanzado",text:"¿Cuál es la diferencia entre BUSCARV y BUSCARX en Excel 365?",opts:["BUSCARX es más lento pero más preciso","BUSCARX puede buscar en cualquier dirección, devuelve rangos y no requiere que la columna clave esté a la izquierda","BUSCARV puede retornar múltiples columnas; BUSCARX solo una","Son idénticas, BUSCARX es solo un alias moderno"],correct:1,feedback:"BUSCARX supera a BUSCARV: busca en cualquier dirección (horizontal/vertical), devuelve arrays completos, tiene manejo nativo de no encontrados y no exige que la clave sea la primera columna."},
+  {level:"avanzado",text:"¿Qué devuelve LAMBDA si la defines así?",code:"=LAMBDA(x,y, x^2 + y^2)(3,4)",opts:["Error porque LAMBDA no se puede llamar directamente","7","25","12"],correct:2,feedback:"LAMBDA(x,y, x^2+y^2)(3,4) es una IIFE: define y llama la función en un solo paso. 3^2+4^2 = 9+16 = 25. LAMBDA permite crear funciones reutilizables en Excel 365."}
+];
+
+const totals = {bajo:0,medio:0,avanzado:0};
+questions.forEach(q=>totals[q.level]++);
+
+let userName="", current=0, scores={bajo:0,medio:0,avanzado:0}, answered=false;
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function startQuiz(){
+  const n = document.getElementById("nameInput").value.trim();
+  if(!n){document.getElementById("nameInput").style.borderColor="#dc2626";return;}
+  document.getElementById("nameInput").style.borderColor="";
+  userName=n; current=0; scores={bajo:0,medio:0,avanzado:0}; answered=false;
+  showScreen("screenQuiz");
+  renderQ();
+}
+
+function renderQ(){
+  const q=questions[current];
+  const pct=Math.round((current/questions.length)*100);
+  document.getElementById("progressFill").style.width=pct+"%";
+  const bMap={bajo:"badge-bajo",medio:"badge-medio",avanzado:"badge-avanzado"};
+  const bLabel={bajo:"Básico",medio:"Medio",avanzado:"Avanzado"};
+  const codeBlock=q.code?`<div class="q-code">${q.code}</div>`:"";
+  const optsHtml=q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="choose(${i})">${o}</button>`).join("");
+  document.getElementById("questionArea").innerHTML=`
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-num">Pregunta ${current+1} de ${questions.length}</span>
+        <span class="q-badge ${bMap[q.level]}">${bLabel[q.level]}</span>
+      </div>
+      <div class="q-text">${q.text}</div>
+      ${codeBlock}
+      <div class="opts">${optsHtml}</div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  answered=false;
+  document.getElementById("btnNext").style.display="none";
+}
+
+function choose(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[current];
+  document.querySelectorAll(".opt").forEach(b=>b.disabled=true);
+  const btns=document.querySelectorAll(".opt");
+  const isCorrect=idx===q.correct;
+  btns[idx].classList.add(isCorrect?"correct":"wrong");
+  if(!isCorrect)btns[q.correct].classList.add("correct");
+  if(isCorrect)scores[q.level]++;
+  const fb=document.getElementById("fb");
+  fb.className="feedback show "+(isCorrect?"ok":"fail");
+  fb.textContent=(isCorrect?"✓ Correcto — ":"✗ Incorrecto — ")+q.feedback;
+  document.getElementById("btnNext").style.display="block";
+}
+
+function nextQ(){
+  current++;
+  if(current<questions.length){renderQ();}
+  else{showResult();}
+}
+
+function showResult(){
+  const total=questions.length;
+  const got=scores.bajo+scores.medio+scores.avanzado;
+  const pct=Math.round((got/total)*100);
+  let level,icon,desc,levelKey;
+  if(scores.avanzado>=3&&scores.medio>=3){level="Nivel Avanzado";icon="🏆";levelKey="Avanzado";desc="Dominas fórmulas matriciales, LAMBDA, INDICE+COINCIDIR, optimización de rendimiento y BUSCARX. Puedes construir modelos complejos y soluciones avanzadas.";}
+  else if(scores.medio>=3||(scores.medio>=2&&scores.bajo>=3)){level="Nivel Medio";icon="⭐";levelKey="Medio";desc="Manejas bien funciones esenciales: BUSCARV/X, tablas dinámicas y condicionales. Hay oportunidad de reforzar fórmulas avanzadas, LAMBDA y optimización.";}
+  else{level="Nivel Básico";icon="📘";levelKey="Básico";desc="Tienes fundamentos de Excel. El siguiente paso es profundizar en referencias, funciones de búsqueda y tablas dinámicas para alcanzar el nivel medio.";}
+  document.getElementById("rIcon").textContent=icon;
+  document.getElementById("rLevel").textContent=level;
+  document.getElementById("rScore").textContent=`${got} de ${total} correctas (${pct}%)`;
+  document.getElementById("rBajo").textContent=`${scores.bajo}/${totals.bajo}`;
+  document.getElementById("rMedio").textContent=`${scores.medio}/${totals.medio}`;
+  document.getElementById("rAvanzado").textContent=`${scores.avanzado}/${totals.avanzado}`;
+  document.getElementById("rDesc").textContent=desc;
+  saveResult({name:userName,date:new Date().toLocaleString("es-CO"),level:levelKey,score:got,total,pct,bajo:scores.bajo,medio:scores.medio,avanzado:scores.avanzado,totBajo:totals.bajo,totMedio:totals.medio,totAvanzado:totals.avanzado});
+  showScreen("screenResult");
+}
+
+function saveResult(r){
+  let data=loadResults();
+  data.unshift(r);
+  try{window.storage.set(STORAGE_KEY,JSON.stringify(data),false);}catch(e){}
+}
+
+function loadResults(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw)return JSON.parse(raw);
+  }catch(e){}
+  return [];
+}
+
+function checkPw(){
+  const pw=document.getElementById("pwInput").value;
+  if(pw===ADMIN_PW){
+    document.getElementById("adminLogin").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    renderHist();
+  }else{
+    document.getElementById("pwErr").style.display="block";
+  }
+}
+
+function logoutAdmin(){
+  document.getElementById("adminLogin").style.display="block";
+  document.getElementById("adminPanel").style.display="none";
+  document.getElementById("pwInput").value="";
+  document.getElementById("pwErr").style.display="none";
+  showScreen("screenHome");
+}
+
+function switchTab(tab){
+  document.getElementById("tabHist").classList.toggle("active",tab==="hist");
+  document.getElementById("tabStats").classList.toggle("active",tab==="stats");
+  document.getElementById("tabHistContent").style.display=tab==="hist"?"block":"none";
+  document.getElementById("tabStatsContent").style.display=tab==="stats"?"block":"none";
+  if(tab==="stats")renderStats();
+}
+
+function renderHist(){
+  const data=loadResults();
+  const el=document.getElementById("histTable");
+  if(!data.length){el.innerHTML='<div class="empty-state">Aún no hay resultados registrados.</div>';return;}
+  const colorMap={Básico:"badge-bajo",Medio:"badge-medio",Avanzado:"badge-avanzado"};
+  const rows=data.map(r=>`
+    <tr>
+      <td>${r.name}</td>
+      <td style="color:var(--color-text-secondary);font-size:12px">${r.date}</td>
+      <td><span class="q-badge level-pill ${colorMap[r.level]||''}">${r.level}</span></td>
+      <td style="text-align:center;font-weight:500">${r.score}/${r.total}</td>
+      <td style="text-align:center;color:var(--color-text-secondary)">${r.pct}%</td>
+    </tr>`).join("");
+  el.innerHTML=`<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Nombre</th><th>Fecha</th><th>Nivel</th><th style="text-align:center">Puntaje</th><th style="text-align:center">%</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function renderStats(){
+  const data=loadResults();
+  const el=document.getElementById("statsGrid");
+  const det=document.getElementById("statsDetail");
+  if(!data.length){el.innerHTML="";det.innerHTML='<div class="empty-state">Sin datos aún.</div>';return;}
+  const avg=Math.round(data.reduce((a,r)=>a+r.pct,0)/data.length);
+  const levels={Básico:0,Medio:0,Avanzado:0};
+  data.forEach(r=>levels[r.level]=(levels[r.level]||0)+1);
+  el.innerHTML=`
+    <div class="stat-card"><div class="stat-num">${data.length}</div><div class="stat-lbl">Evaluaciones</div></div>
+    <div class="stat-card"><div class="stat-num">${avg}%</div><div class="stat-lbl">Promedio</div></div>
+    <div class="stat-card"><div class="stat-num">${levels.Avanzado||0}</div><div class="stat-lbl">Nivel avanzado</div></div>`;
+  const bars=Object.entries(levels).map(([l,c])=>{
+    const pct=Math.round((c/data.length)*100);
+    const cm={Básico:"#16a34a",Medio:"#854d0e",Avanzado:"#5b21b6"};
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--color-text-primary)">${l}</span><span style="color:var(--color-text-secondary)">${c} persona${c!==1?'s':''} (${pct}%)</span></div>
+      <div style="height:8px;background:var(--color-border-tertiary);border-radius:99px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${cm[l]};border-radius:99px"></div></div>
+    </div>`;}).join("");
+  det.innerHTML=`<div class="card" style="margin-top:0">${bars}</div>`;
+}
+
+function clearHistory(){
+  if(!confirm("¿Seguro que deseas borrar todo el historial?"))return;
+  try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
+  renderHist();
+}
+
+async function loadFromStorage(){
+  try{
+    const r=await window.storage.get(STORAGE_KEY,false);
+    if(r&&r.value){localStorage.setItem(STORAGE_KEY,r.value);}
+  }catch(e){}
+}
+
+async function syncAndSave(data){
+  try{await window.storage.set(STORAGE_KEY,JSON.stringify(data),false);}catch(e){}
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+}
+
+const origSave=saveResult;
+window.saveResult=function(r){
+  let data=loadResults();
+  data.unshift(r);
+  syncAndSave(data);
+};
+
+loadFromStorage();
+</script>
